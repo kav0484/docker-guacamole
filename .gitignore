@@ -1,4 +1,4 @@
-initdb/
-mysql/
+initdb/*
+mysql/*
 !initdb/.gitkeep
 !mysql/.gitkeep
