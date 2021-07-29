@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+    mariadb:
+        container_name: mysql
+        image: mariadb:10.6
+        restart: always
+        environment: 
+            - "MARIADB_ROOT_PASSWORD=password"
+            - "MARIADB_DATABASE=guacamole_db"
+        volumes: 
+            - "$PWD/mysql:/var/lib/mysql"
+            - "$PWD/initdb:/docker-entrypoint-initdb.d"
+        networks: 
+            - default
+
+
+    guacd:
+        container_name: guacd
+        image: guacamole/guacd
+        restart: always
+        networks: 
+            - default
+
+
+
+    guacamole:
+        image: guacamole/guacamole
+        restart: always
+        ports: 
+            - "8080:8080"
+        environment: 
+            - "MYSQL_DATABASE=guacamole_db"
+            - "MYSQL_USER=root"
+            - "MYSQL_PASSWORD=password"
+            - "MYSQL_HOSTNAME=mariadb"
+            - "GUACD_HOSTNAME=guacd"
+        links: 
+            - mariadb
+            - guacd
+        depends_on:
+            - mariadb
+            - guacd
+        networks: 
+            default:
+            lan:
+                ipv4_address: 192.168.122.10
+networks: 
+    default:
+        driver: bridge
+    lan:
+        driver: macvlan
+        driver_opts:
+            parent: enp1s0
+        ipam:
+            config:
+                - subnet: 192.168.122.0/24
+                

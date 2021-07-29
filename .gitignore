@@ -1,0 +1,4 @@
+initdb/
+mysql/
+!initdb/.gitkeep
+!mysql/.gitkeep
